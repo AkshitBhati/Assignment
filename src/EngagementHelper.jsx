@@ -6,9 +6,9 @@ const engagementHelper = {
     const channelsWithMultipleDates = channels.filter((channel) => {
       const messageCountForChannel = messageCountList.filter(
         (message) => message.channelId === channel.value
-      )
+      );
       return messageCountForChannel.length > 1;
-    })
+    });
 
     // Create data arrays for each channel
     const seriesData = channelsWithMultipleDates.map((channel) => {
@@ -20,14 +20,14 @@ const engagementHelper = {
       const data = messageCountForChannel.map((message) => ({
         x: new Date(message.timeBucket).getTime(),
         y: parseInt(message.count),
-      }))
+      }));
 
       return {
         name: channel.name,
         data,
-        type: 'spline', 
-      }
-    })
+        type: 'spline',
+      };
+    });
 
     const options = {
       chart: {
@@ -50,20 +50,17 @@ const engagementHelper = {
       },
       tooltip: {
         formatter: function () {
-          return (
-            '<b>' +
-            Highcharts.dateFormat('%e %b', this.x) +
-            '</b><br>' +
-            'Messages: ' +
-            this.y
-          )
+          const channelName = this.series.name;
+          const messageCount = this.y;
+          const date = Highcharts.dateFormat('%e %b', this.x);
+          return `${channelName}<br>${messageCount} message on : ${date}`;
         },
       },
       series: seriesData,
-    }
+    };
 
     return options;
   },
-}
+};
 
 export default engagementHelper;
