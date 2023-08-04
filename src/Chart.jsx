@@ -6,7 +6,7 @@ import { channels, messageCountList } from "./Data";
 const EngagementMessagesOverTime = ()=>{
   const options = engagementHelper.engagementMessageOverTimeChartOptions(messageCountList, channels)
     console.log(options)
-	return <HighchartsReact highcharts={Highcharts} options={options} />
+	return <HighchartsReact highcharts={Highcharts} options={options}  />
 }
 
 export default EngagementMessagesOverTime
