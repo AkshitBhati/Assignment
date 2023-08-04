@@ -6,9 +6,9 @@ const engagementHelper = {
     const channelsWithMultipleDates = channels.filter((channel) => {
       const messageCountForChannel = messageCountList.filter(
         (message) => message.channelId === channel.value
-      );
+      )
       return messageCountForChannel.length > 1;
-    });
+    })
 
     // Create data arrays for each channel
     const seriesData = channelsWithMultipleDates.map((channel) => {
@@ -20,14 +20,14 @@ const engagementHelper = {
       const data = messageCountForChannel.map((message) => ({
         x: new Date(message.timeBucket).getTime(),
         y: parseInt(message.count),
-      }));
+      }))
 
       return {
         name: channel.name,
         data,
-        type: 'spline', // Set the type to 'spline' for parabolic graph
-      };
-    });
+        type: 'spline', 
+      }
+    })
 
     const options = {
       chart: {
@@ -56,14 +56,14 @@ const engagementHelper = {
             '</b><br>' +
             'Messages: ' +
             this.y
-          );
+          )
         },
       },
       series: seriesData,
-    };
+    }
 
     return options;
   },
-};
+}
 
 export default engagementHelper;
