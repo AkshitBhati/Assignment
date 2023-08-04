@@ -1,4 +1,4 @@
-import Highcharts from 'highcharts/highstock'
+import Highcharts from 'highcharts/highstock';
 
 const engagementHelper = {
   engagementMessageOverTimeChartOptions: (messageCountList, channels) => {
@@ -6,29 +6,28 @@ const engagementHelper = {
     const channelsWithMultipleDates = channels.filter((channel) => {
       const messageCountForChannel = messageCountList.filter(
         (message) => message.channelId === channel.value
-      )
-      return messageCountForChannel.length > 1
-    })
+      );
+      return messageCountForChannel.length > 1;
+    });
 
     // Create data arrays for each channel
     const seriesData = channelsWithMultipleDates.map((channel) => {
       const messageCountForChannel = messageCountList.filter(
         (message) => message.channelId === channel.value
-      )
+      );
 
       // Format data for Highcharts series
       const data = messageCountForChannel.map((message) => ({
         x: new Date(message.timeBucket).getTime(),
         y: parseInt(message.count),
-      }))
-      
+      }));
 
       return {
         name: channel.name,
         data,
-        
-      }
-    })
+        type: 'spline', // Set the type to 'spline' for parabolic graph
+      };
+    });
 
     const options = {
       chart: {
@@ -40,7 +39,7 @@ const engagementHelper = {
       xAxis: {
         type: 'datetime',
         labels: {
-          format: '{value:%e %b}', 
+          format: '{value:%e %b}',
         },
       },
       yAxis: {
@@ -53,19 +52,18 @@ const engagementHelper = {
         formatter: function () {
           return (
             '<b>' +
-            Highcharts.dateFormat('%e %b', this.x) + 
+            Highcharts.dateFormat('%e %b', this.x) +
             '</b><br>' +
             'Messages: ' +
             this.y
-          )
+          );
         },
       },
       series: seriesData,
-     
-    }
+    };
 
     return options;
   },
-}
+};
 
 export default engagementHelper;
