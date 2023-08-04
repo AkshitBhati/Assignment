@@ -1,74 +1,61 @@
+import Highcharts from 'highcharts/highstock'
+
 const engagementHelper = {
-    engagementMessageOverTimeChartOptions: (messageCountList, channels) => {
-      const uniqueDatesByChannel = {};
-  
-      // Calculate the number of unique dates for each channel
-      for (const message of messageCountList) {
-        const channelId = message.channelId;
-        const date = new Date(message.timeBucket).toLocaleDateString('en-IN', {
-          month: 'short',
-          day: 'numeric',
-        });
-  
-        if (!uniqueDatesByChannel[channelId]) {
-          uniqueDatesByChannel[channelId] = new Set();
-        }
-  
-        uniqueDatesByChannel[channelId].add(date);
-      }
-  
-      // Filter channels with messages on more than one date
-      const channelsWithMultipleDates = channels.filter((channel) => {
-        const channelId = channel.id;
-        const uniqueDates = uniqueDatesByChannel[channelId];
-        return uniqueDates && uniqueDates.size > 1;
-      });
-  
-      const seriesData = channelsWithMultipleDates.map((channel) => {
-        const channelId = channel.id;
-        const uniqueDates = new Set(messageCountList
-          .filter((message) => message.channelId === channelId)
-          .map((message) => new Date(message.timeBucket).toLocaleDateString('en-IN', {
-            month: 'short',
-            day: 'numeric',
-          }))
-        );
-  
-        return {
-          name: channel.name,
-          data: Array.from(uniqueDates).map((date) => ({
-            x: new Date(date).getTime(),
-            y: uniqueDates.size,
-          })),
-        };
-      });
-  
-      const options = {
-        chart: {
-          type: 'line',
-        },
-        title: {
-          text: 'Engagement Messages Over Time',
-        },
-        xAxis: {
-          type: 'datetime',
-          labels: {
-            format: '{value:%b %e}', // Short month and day (e.g., Jan 1)
-          },
-        },
-        yAxis: {
-          title: {
-            text: 'Number of Unique Dates',
-          },
-          min: 0,
-          allowDecimals: false,
-        },
-        series: seriesData,
+  engagementMessageOverTimeChartOptions: (messageCountList, channels) => {
+    
+    const generalChannelId = channels.find(channel => channel.name === "general")?.id;
+    const generalChannelMessages = messageCountList.filter(
+      (message) => message.channelId === generalChannelId
+    );
+
+    
+    const generalChannelData = Array.from(new Set(generalChannelMessages.map((message) => {
+      return {
+        x: new Date(message.timeBucket).getTime(),
+        y: parseInt(message.count),
       };
-  
-      return options;
-    },
-  };
-  
-  export default engagementHelper;
-  
+    })));
+
+    const options = {
+      chart: {
+        type: "line",
+      },
+      title: {
+        text: "Engagement Messages Over Time for General Channel",
+      },
+      xAxis: {
+        type: "datetime",
+        labels: {
+          format: "{value:%b %e}", 
+        },
+      },
+      yAxis: {
+        title: {
+          text: "Number of Messages",
+        },
+        min: 0,
+      },
+      tooltip: {
+        formatter: function () {
+          return (
+            "<b>" +
+            Highcharts.dateFormat("%b %e", this.x) +
+            "</b><br>" +
+            "Messages: " +
+            this.y
+          )
+        },
+      },
+      series: [
+        {
+          name: "General Channel",
+          data: generalChannelData,
+        },
+      ],
+    }
+
+    return options;
+  },
+};
+
+export default engagementHelper;
